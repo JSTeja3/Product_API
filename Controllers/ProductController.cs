@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Product_API.Models;
+using Product_API.IServices;
+using Product_API.Services;
 
 namespace Product_API.Controllers
 {
@@ -7,22 +9,23 @@ namespace Product_API.Controllers
     [Route("products")]
     public class ProductController : ControllerBase
     {
-        private static List<Product> products = new List<Product>
+        private readonly IProductService _productService; 
+        public ProductController(IProductService productService)
         {
-            new Product { Id=1, Name="Chair", Price=655.56},
-            new Product { Id=2, Name="Table", Price=2555.25}
-        };
+            this._productService = productService;   
+        }
 
         [HttpGet]
         public IActionResult GetAllProducts()
         {
+            List<Product> products = this._productService.GetAllProducts();
             return Ok(products);
         }
 
         [HttpGet("{id}")]
         public IActionResult GetProductById(int id)
         {
-            Product? product = products.FirstOrDefault(p => p.Id == id);
+            Product? product = this._productService.GetProductById(id);
 
             if(product == null)
             {
@@ -34,9 +37,9 @@ namespace Product_API.Controllers
         [HttpPost]
         public IActionResult AddProduct(Product product)
         {
-            products.Add(product);
+            Product createdProduct = this._productService.AddProduct(product);
 
-            return CreatedAtAction(nameof(GetProductById), new{id=product.Id}, product);
+            return CreatedAtAction(nameof(GetProductById), new{id=product.Id}, createdProduct);
         }
     }
 }
