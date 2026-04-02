@@ -41,5 +41,12 @@ namespace Product_API.Controllers
 
             return CreatedAtAction(nameof(GetProductById), new{id=product.Id}, createdProduct);
         }
+
+        [HttpGet("search")]
+        public IActionResult SearchProductByName(string name)
+        {
+            List<Product> products = this._productService.SearchProductByName(name);
+            return Ok(products);
+        }
     }
 }

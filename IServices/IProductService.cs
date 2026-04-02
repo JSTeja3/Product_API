@@ -9,5 +9,7 @@ namespace Product_API.IServices
         Product? GetProductById(int id);
 
         Product AddProduct(Product product);
+
+        List<Product> SearchProductByName(string name); 
     }
 }
