@@ -1,5 +1,6 @@
 using Product_API.IServices;
 using Product_API.Services;
+using Product_API.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,11 +22,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.Use(async(context, next) =>
-{
-   Console.WriteLine($"Request received for {context.Request.Path}");
-    await next(); 
-});
+app.UseMiddleware<LoggingMiddleware>();
 
 app.MapControllers();
 
