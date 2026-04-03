@@ -40,5 +40,21 @@ namespace Product_API.Services
             List<Product> result = products.Where(p => p.Name.Contains(name, StringComparison.OrdinalIgnoreCase)).ToList();
             return result;
         }
+
+        public Product? UpdateProduct(int id, Product product)
+        {
+            Product? existingProduct = products.FirstOrDefault(p => p.Id == id);
+
+            if(existingProduct == null)
+            {
+                return null;
+            }
+            existingProduct.Name = product.Name;
+            existingProduct.Price = product.Price;
+            existingProduct.Category = product.Category;
+            existingProduct.Stock = product.Stock;
+
+            return existingProduct;
+        }
     }
 }

@@ -11,5 +11,7 @@ namespace Product_API.IServices
         Product AddProduct(Product product);
 
         List<Product> SearchProductByName(string name); 
+
+        Product? UpdateProduct(int id, Product product);
     }
 }
