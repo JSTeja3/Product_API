@@ -20,6 +20,7 @@ namespace Product_API.Controllers
         {
             List<Product> products = this._productService.GetAllProducts();
             return Ok(products);
+            //throw new InvalidOperationException("Database connection timeout");
         }
 
         [HttpGet("{id}")]
