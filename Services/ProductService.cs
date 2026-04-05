@@ -56,5 +56,18 @@ namespace Product_API.Services
 
             return existingProduct;
         }
+
+        public bool DeleteProduct(int id)
+        {
+            var existingProduct = products.FirstOrDefault(p => p.Id == id);
+            if(existingProduct == null)
+            {
+                return false;
+            }
+
+            products.Remove(existingProduct);
+
+            return true;
+        }
     }
 }

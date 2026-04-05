@@ -13,5 +13,8 @@ namespace Product_API.IServices
         List<Product> SearchProductByName(string name); 
 
         Product? UpdateProduct(int id, Product product);
+
+        bool DeleteProduct(int id);
+
     }
 }

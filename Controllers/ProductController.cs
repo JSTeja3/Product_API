@@ -71,5 +71,17 @@ namespace Product_API.Controllers
             }
             return Ok(updateProduct);
         }
+
+        [HttpDelete("{id}")]
+        public IActionResult DeleteProduct(int id)
+        {
+            bool isDeleted = _productService.DeleteProduct(id);
+            if (!isDeleted)
+            {
+                return NotFound();
+            }
+
+            return NoContent();
+        } 
     }
 }
