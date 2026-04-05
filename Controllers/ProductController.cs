@@ -20,6 +20,7 @@ namespace Product_API.Controllers
         {
             List<Product> products = this._productService.GetAllProducts();
             return Ok(products);
+            //throw new InvalidOperationException("Database connection timeout");
         }
 
         [HttpGet("{id}")]
@@ -37,9 +38,50 @@ namespace Product_API.Controllers
         [HttpPost]
         public IActionResult AddProduct(Product product)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             Product createdProduct = this._productService.AddProduct(product);
 
             return CreatedAtAction(nameof(GetProductById), new{id=product.Id}, createdProduct);
         }
+
+        [HttpGet("search")]
+        public IActionResult SearchProductByName(string name)
+        {
+            List<Product> products = this._productService.SearchProductByName(name);
+            return Ok(products);
+        }
+
+        [HttpPut("{id}")]
+        public IActionResult UpdateProduct(int id, Product product)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            Product? updateProduct = this._productService.UpdateProduct(id, product);
+
+            if(updateProduct == null)
+            {
+                return NotFound();
+            }
+            return Ok(updateProduct);
+        }
+
+        [HttpDelete("{id}")]
+        public IActionResult DeleteProduct(int id)
+        {
+            bool isDeleted = _productService.DeleteProduct(id);
+            if (!isDeleted)
+            {
+                return NotFound();
+            }
+
+            return NoContent();
+        } 
     }
 }
