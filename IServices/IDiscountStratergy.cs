@@ -1,6 +1,6 @@
 using Product_API.Models;
 
-namespace Product_API.Services
+namespace Product_API.IServices
 {
     public interface IDiscountStrategy
     {

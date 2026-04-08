@@ -3,11 +3,11 @@ using Product_API.IServices;
 
 namespace Product_API.Services
 {
-    public class FestivalDiscount : IDiscountStrategy
+    public class BulkDiscount : IDiscountStrategy
     {
         public double ApplyDiscount(Product product)
         {
-            return product.Price * 0.9;
+            return product.Price * 0.8;
         }
     }
 }
