@@ -6,15 +6,15 @@ namespace Product_API.Services
     public class StockService:IStockService
     {
 
-        private IProductService _productService;
+        private IProductRepository _repository;
 
-        public StockService(IProductService productService)
+        public StockService(IProductRepository repository)
         {
-            _productService = productService;
+            _repository = repository;
         }
         public bool IsInStock(int productId)
         {
-            Product? product = _productService.GetProductById(productId);
+            Product? product = _repository.GetProductById(productId);
 
             if(product == null || !product.IsInStock())
             {
@@ -25,7 +25,7 @@ namespace Product_API.Services
 
         public Product? UpdateStock(int productId, int quantity)
         {
-            Product? product = _productService.GetProductById(productId);
+            Product? product = _repository.GetProductById(productId);
             if(product != null)
             {
                 product.UpdateStock(quantity);
