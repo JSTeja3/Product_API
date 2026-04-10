@@ -15,5 +15,7 @@ namespace Product_API.IServices
         Product? UpdateProduct(int id, Product product);
 
         bool DeleteProduct(int id);
+
+        PagedResponse<Product> GetProducts(int pageNumber, int pageSize, string? category, double? minPrice, double? maxPrice); 
     }
 }

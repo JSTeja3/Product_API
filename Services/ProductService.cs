@@ -14,7 +14,7 @@ namespace Product_API.Services
         public List<Product> GetAllProducts()
         {
             return _repository.GetAllProducts();
-        }   
+        }
         public Product? GetProductById(int id)
         {
             return _repository.GetProductById(id);
@@ -37,6 +37,11 @@ namespace Product_API.Services
         public bool DeleteProduct(int id)
         {
             return _repository.DeleteProduct(id);
+        }
+
+        public PagedResponse<Product> GetProducts(int pageNumber, int pageSize, string? category, double? minPrice, double? maxPrice)
+        {
+            return _repository.GetProducts(pageNumber, pageSize, category, minPrice, maxPrice);
         }
     }
 }

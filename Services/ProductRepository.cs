@@ -15,7 +15,7 @@ namespace Product_API.Services
         public List<Product> GetAllProducts()
         {
             return products;
-        }   
+        }
         public Product? GetProductById(int id)
         {
             Product? product = products.FirstOrDefault(p => p.Id == id);
@@ -33,11 +33,11 @@ namespace Product_API.Services
             return result;
         }
 
-         public Product? UpdateProduct(int id, Product product)
+        public Product? UpdateProduct(int id, Product product)
         {
             Product? existingProduct = products.FirstOrDefault(p => p.Id == id);
 
-            if(existingProduct == null)
+            if (existingProduct == null)
             {
                 return null;
             }
@@ -52,7 +52,7 @@ namespace Product_API.Services
         public bool DeleteProduct(int id)
         {
             var existingProduct = products.FirstOrDefault(p => p.Id == id);
-            if(existingProduct == null)
+            if (existingProduct == null)
             {
                 return false;
             }
@@ -60,6 +60,39 @@ namespace Product_API.Services
             products.Remove(existingProduct);
 
             return true;
+        }
+
+        public PagedResponse<Product> GetProducts(int pageNumber, int pageSize, string? category, double? minPrice, double? maxPrice)
+        {
+            var query = products.AsQueryable();
+            if (!string.IsNullOrWhiteSpace(category))
+            {
+                query = query.Where(p =>
+                    p.Category.Equals(category, StringComparison.OrdinalIgnoreCase));
+            }
+
+            if (minPrice.HasValue)
+            {
+                query = query.Where(p => p.Price >= minPrice.Value);
+            }
+
+            if (maxPrice.HasValue)
+            {
+                query = query.Where(p => p.Price <= maxPrice.Value);
+            }
+
+            var totalCount = query.Count();
+
+            var pagedProducts = query.Skip((pageNumber-1)*pageSize).Take(pageSize).ToList();
+
+            return new PagedResponse<Product>
+            {
+              TotalCount = totalCount,
+              PageNumber = pageNumber,
+              PageSize = pageSize,
+              Data = pagedProducts
+            };
+
         }
     }
 }
