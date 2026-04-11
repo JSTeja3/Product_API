@@ -1,5 +1,6 @@
 using Product_API.Models;
 using Product_API.IServices;
+using Product_API.IRepository;
 
 namespace Product_API.Services
 {

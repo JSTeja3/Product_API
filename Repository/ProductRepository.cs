@@ -1,7 +1,7 @@
 using Product_API.Models;
-using Product_API.IServices;
+using Product_API.IRepository;
 
-namespace Product_API.Services
+namespace Product_API.Repository
 {
     public class ProductRepository : IProductRepository
     {
@@ -45,6 +45,7 @@ namespace Product_API.Services
             existingProduct.Price = product.Price;
             existingProduct.Category = product.Category;
             existingProduct.Stock = product.Stock;
+            existingProduct.UpdatedAt = DateTime.Now;
 
             return existingProduct;
         }

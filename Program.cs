@@ -1,6 +1,8 @@
 using Product_API.IServices;
 using Product_API.Services;
 using Product_API.Middlewares;
+using Product_API.IRepository;
+using Product_API.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +13,8 @@ builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IStockService, StockService>();
 builder.Services.AddScoped<IDiscountStrategy, FestivalDiscount>();
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
