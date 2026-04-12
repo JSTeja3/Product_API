@@ -27,7 +27,7 @@ namespace Product_API.Services
         public Product? UpdateStock(int productId, int quantity)
         {
             Product? product = _repository.GetProductById(productId);
-            if(product != null)
+            if(product != null && quantity>=0)
             {
                 product.UpdateStock(quantity);
                 product.UpdatedAt = DateTime.Now;

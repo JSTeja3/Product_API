@@ -26,7 +26,7 @@ namespace Product_API.Services
                 return null;
             }
 
-            if (product.Stock < quantity)
+            if ( product.Stock <= 0 || product.Stock < quantity)
             {
                 return null;
             }

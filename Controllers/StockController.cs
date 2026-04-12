@@ -33,7 +33,7 @@ namespace Product_API.Controllers
             Product? product = _stockService.UpdateStock(id, quantity);
             if(product == null)
             {
-                return NotFound();
+                return Conflict("Product doesn't exist or requested quantity is not available");
             }
 
             return Ok(product);
