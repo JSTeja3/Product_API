@@ -1,23 +1,9 @@
 # Product API
 
-A simple ASP.NET Core Web API built to understand **request lifecycle, endpoint flow, controllers, routing, and CRUD fundamentals**.
+A production-style ASP.NET Core Web API built to simulate a **retail inventory and order management backend**.
 
-This project was built as a practical learning exercise and is designed to serve as a **foundation for future enterprise retail application development**.(if developed)
+This project started as a simple Product CRUD API and has been progressively enhanced using **clean architecture, SOLID principles, middleware, repository pattern, pagination, filtering, inventory, and order placement workflows**.
 
----
-
-## 🎯 Purpose
-
-The goal of this project is to understand how an ASP.NET Core API processes requests end-to-end, including:
-
-* Request flow through middleware
-* Endpoint routing
-* Controllers and action methods
-* Model binding
-* Response generation
-* REST API design basics
-
-This project is intentionally kept simple so the core concepts are clear.
 
 ---
 
@@ -31,6 +17,21 @@ This project is intentionally kept simple so the core concepts are clear.
 
 ---
 
+## 🏗️ Architecture
+
+Current layered architecture:
+
+Controller → Service → Repository → In-Memory Data
+
+Modules:
+
+- Products
+- Stock / Inventory
+- Orders
+- Discount Strategies
+
+---
+
 ## 📂 Project Structure
 
 ```text
@@ -38,9 +39,39 @@ ProductApi
 │
 ├── Controllers
 │   └── ProductsController.cs
+│   └── StockController.cs
+│   └── DiscountController.cs
+│   └── OrderContoller.cs
+|
+├── IServices
+│   └── IProductService.cs
+│   └── IStockService.cs
+│   └── IDiscountService.cs
+│   └── IOrderService.cs
+|
+├── Services
+│   └── ProductService.cs
+│   └── StockService.cs
+│   └── DiscountService.cs
+│   └── OrderService.cs
+|
+├── IRepository
+│   └── IProductRepository.cs
+│   └── IOrderRepository.cs
+|
+├── Repository
+│   └── ProductRepository.cs
+│   └── OrderRepository.cs
 │
 ├── Models
+│   └── BaseEntity.cs
 │   └── Product.cs
+│   └── Order.cs
+│   └── PagedResponse.cs
+|
+├── Middlewares
+│   └── ExceptionMiddleware.cs
+│   └── LoggingMiddleware.cs
 │
 ├── Program.cs
 │
@@ -53,108 +84,33 @@ ProductApi
 
 Implemented endpoints:
 
+### ✅ Products
+
+
 * `GET /products`
 * `GET /products/{id}`
 * `POST /products`
+* `GET /products/search?name={value}`
+* `PUT /products/{id}`
+* `Delete /products/{id}`
+* `GET /products?pageNumber={value}&pageSize={value}&category={value}&minprice={value}&maxprice={value}`
 
-This project currently uses an **in-memory list** instead of a database.
 
----
+### ✅ Stock
 
-## 🚀 API Endpoints
+* `GET /stocks/{id}/availability`
+* `GET /stocks/{id}/update`
 
-### Get All Products
+### ✅ Discount
 
-```http
-GET /products
-```
+* `GET /discounts/{id}`
 
-Returns the list of all products.
+### ✅ Orders
 
----
 
-### Get Product By Id
+* `POST /orders`
 
-```http
-GET /products/{id}
-```
 
-Example:
 
-```http
-GET /products/1
-```
-
-Returns a single product by id.
-
----
-
-### Create Product
-
-```http
-POST /products
-```
-
-Sample request body:
-
-```json
-{
-  "id": 3,
-  "name": "Laptop",
-  "price": 65000
-}
-```
-
-Returns:
-
-* `201 Created`
-* created product object
-* location header of the new resource
-
----
-
-## 🔄 Request Flow Understanding
-
-One of the main learning objectives of this project is understanding how a request flows inside ASP.NET Core.
-
-Example request:
-
-```http
-GET /products/1
-```
-
-Flow:
-
-```text
-Client Request
-   ↓
-Kestrel Web Server
-   ↓
-Middleware Pipeline (Program.cs)
-   ↓
-Routing (MapControllers)
-   ↓
-ProductsController
-   ↓
-Action Method
-   ↓
-JSON Response
-```
-
----
-
-## 📖 Concepts Practiced
-
-This project helped reinforce:
-
-* **Kestrel server**
-* **middleware pipeline**
-* **routing**
-* **controllers**
-* **action methods**
-* **HTTP verbs**
-* **model binding**
-* **status codes**
-* **RESTful API basics**
 
 

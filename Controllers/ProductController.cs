@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Product_API.Models;
 using Product_API.IServices;
-using Product_API.Services;
 
 namespace Product_API.Controllers
 {
@@ -83,5 +82,13 @@ namespace Product_API.Controllers
 
             return NoContent();
         } 
+
+        [HttpGet("filters")]
+        public IActionResult GetProducts([FromQuery] int pageNumber=1, [FromQuery] int pageSize=10, [FromQuery] string? category=null, [FromQuery] double? minPrice=null, [FromQuery] double? maxPrice=null)
+        {
+            var result = _productService.GetProducts(pageNumber, pageSize, category, minPrice, maxPrice);
+
+            return Ok(result);
+        }
     }
 }
