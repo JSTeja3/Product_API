@@ -15,6 +15,7 @@ builder.Services.AddScoped<IStockService, StockService>();
 builder.Services.AddScoped<IDiscountStrategy, FestivalDiscount>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<IProductCacheService, ProductCacheService>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
