@@ -10,6 +10,8 @@ namespace Product_API.Services
         private readonly IProductRepository _productRepo;
         private readonly IStockService _stockService;
 
+        private static readonly object _stockLock = new();
+
         public OrderService(IOrderRepository orderRepo, IProductRepository productRepo, IStockService stockService)
         {
             _orderRepo = orderRepo;
@@ -26,18 +28,24 @@ namespace Product_API.Services
                 return null;
             }
 
-            if ( product.Stock <= 0 || product.Stock < quantity)
+            lock (_stockLock)
             {
-                return null;
+                if (product.Stock <= 0 || product.Stock < quantity)
+                {
+                    return null;
+                }
+
+                product.UpdateStock(product.Stock-quantity);
+                product.UpdatedAt = DateTime.UtcNow;
+
             }
 
-            await _stockService.UpdateStockAsync(productId, product.Stock-quantity);
 
             var order = new Order
             {
-               ProductId = productId,
-               Quantity = quantity,
-               Status = "Placed"
+                ProductId = productId,
+                Quantity = quantity,
+                Status = "Placed"
 
             };
             return await _orderRepo.AddOrderAsync(order);

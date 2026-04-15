@@ -7,7 +7,7 @@ namespace Product_API.Controllers
 {
     [ApiController]
     [Route("orders")]
-    public class OrderController: ControllerBase
+    public class OrderController : ControllerBase
     {
         private readonly IOrderService _orderService;
 
@@ -17,7 +17,7 @@ namespace Product_API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> PlaceOrder([FromQuery]int productId, [FromQuery]int quantity)
+        public async Task<IActionResult> PlaceOrder([FromQuery] int productId, [FromQuery] int quantity)
         {
             Order? order = await _orderService.PlaceOrderAsync(productId, quantity);
             if (order == null)
@@ -25,6 +25,23 @@ namespace Product_API.Controllers
                 return Conflict("Insufficient stock or product invalid");
             }
             return Ok(order);
+        }
+
+        [HttpPost("simulate-concurrent-orders")]
+        public async Task<IActionResult> SimulateConcurrentOrders()
+        {
+            var task1 = _orderService.PlaceOrderAsync(5, 1);
+            var task2 = _orderService.PlaceOrderAsync(5, 1);
+            var task3 = _orderService.PlaceOrderAsync(5, 1);
+
+            var results = await Task.WhenAll(task1, task2, task3);
+
+            var successCount = results.Count(r => r != null);
+
+            return Ok(new
+            {
+                successfulOrders = successCount
+            });
         }
     }
 }
