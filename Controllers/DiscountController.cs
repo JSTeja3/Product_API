@@ -18,9 +18,9 @@ namespace Product_API.Controllers
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetDiscountedPrice(int id)
+        public async Task<IActionResult> GetDiscountedPrice(int id)
         {
-            Product? product = _productService.GetProductById(id);
+            Product? product = await _productService.GetProductByIdAsync(id);
             if (product == null)
             {
                 return NotFound();

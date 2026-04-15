@@ -17,9 +17,9 @@ namespace Product_API.Services
             _stockService = stockService;
         }
 
-        public Order? PlaceOrder(int productId, int quantity)
+        public async Task<Order?> PlaceOrderAsync(int productId, int quantity)
         {
-            Product? product = _productRepo.GetProductById(productId);
+            Product? product = await _productRepo.GetProductByIdAsync(productId);
 
             if (product == null)
             {
@@ -31,7 +31,7 @@ namespace Product_API.Services
                 return null;
             }
 
-            _stockService.UpdateStock(productId, product.Stock-quantity);
+            await _stockService.UpdateStockAsync(productId, product.Stock-quantity);
 
             var order = new Order
             {
@@ -40,7 +40,7 @@ namespace Product_API.Services
                Status = "Placed"
 
             };
-            return _orderRepo.AddOrder(order);
+            return await _orderRepo.AddOrderAsync(order);
         }
 
     }

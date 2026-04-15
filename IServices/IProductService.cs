@@ -4,19 +4,19 @@ namespace Product_API.IServices
 {
     public interface IProductService
     {
-        List<Product> GetAllProducts();
+        Task<List<Product>> GetAllProductsAsync();
 
-        Product? GetProductById(int id);
+        Task<Product?> GetProductByIdAsync(int id);
 
-        Product AddProduct(Product product);
+        Task<Product> AddProductAsync(Product product);
 
-        List<Product> SearchProductByName(string name); 
+        Task<List<Product>> SearchProductByNameAsync(string name); 
 
-        Product? UpdateProduct(int id, Product product);
+        Task<Product?> UpdateProductAsync(int id, Product product);
 
-        bool DeleteProduct(int id);
+        Task<bool> DeleteProductAsync(int id);
 
-        PagedResponse<Product> GetProducts(int pageNumber, int pageSize, string? category, double? minPrice, double? maxPrice);
+        Task<PagedResponse<Product>> GetProductsAsync(int pageNumber, int pageSize, string? category, double? minPrice, double? maxPrice);
         
     }
 }

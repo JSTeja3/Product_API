@@ -12,29 +12,33 @@ namespace Product_API.Repository
             new Product { Id=3, Name="Lamp-BE001-6X15", Price=230.23, Category="Bed", Stock=0}
 
         };
-        public List<Product> GetAllProducts()
+        public async Task<List<Product>> GetAllProductsAsync()
         {
-            return products;
+            await Task.Delay(100);
+            return products.ToList();
         }
-        public Product? GetProductById(int id)
+        public async Task<Product?> GetProductByIdAsync(int id)
         {
+            await Task.Delay(50);
             Product? product = products.FirstOrDefault(p => p.Id == id);
             return product;
         }
 
-        public Product AddProduct(Product product)
+        public async Task<Product> AddProductAsync(Product product)
         {
             products.Add(product);
             return product;
         }
-        public List<Product> SearchProductByName(string name)
+        public async Task<List<Product>> SearchProductByNameAsync(string name)
         {
             List<Product> result = products.Where(p => p.Name.Contains(name, StringComparison.OrdinalIgnoreCase)).ToList();
             return result;
         }
 
-        public Product? UpdateProduct(int id, Product product)
+        public async Task<Product?> UpdateProductAsync(int id, Product product)
         {
+            await Task.Delay(50);
+
             Product? existingProduct = products.FirstOrDefault(p => p.Id == id);
 
             if (existingProduct == null)
@@ -50,7 +54,7 @@ namespace Product_API.Repository
             return existingProduct;
         }
 
-        public bool DeleteProduct(int id)
+        public async Task<bool> DeleteProductAsync(int id)
         {
             var existingProduct = products.FirstOrDefault(p => p.Id == id);
             if (existingProduct == null)
@@ -63,7 +67,7 @@ namespace Product_API.Repository
             return true;
         }
 
-        public PagedResponse<Product> GetProducts(int pageNumber, int pageSize, string? category, double? minPrice, double? maxPrice)
+        public async Task<PagedResponse<Product>> GetProductsAsync(int pageNumber, int pageSize, string? category, double? minPrice, double? maxPrice)
         {
             var query = products.AsQueryable();
             if (!string.IsNullOrWhiteSpace(category))

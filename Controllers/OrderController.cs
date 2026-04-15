@@ -17,9 +17,9 @@ namespace Product_API.Controllers
         }
 
         [HttpPost]
-        public IActionResult PlaceOrder([FromQuery]int productId, [FromQuery]int quantity)
+        public async Task<IActionResult> PlaceOrder([FromQuery]int productId, [FromQuery]int quantity)
         {
-            Order? order = _orderService.PlaceOrder(productId, quantity);
+            Order? order = await _orderService.PlaceOrderAsync(productId, quantity);
             if (order == null)
             {
                 return Conflict("Insufficient stock or product invalid");

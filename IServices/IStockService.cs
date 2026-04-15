@@ -4,8 +4,8 @@ namespace Product_API.IServices
 {
     public interface IStockService
     {
-        bool IsInStock(int productId);
+        Task<bool> IsInStockAsync(int productId);
 
-        Product? UpdateStock(int productId, int quantity);
+        Task<Product?> UpdateStockAsync(int productId, int quantity);
     }
 }

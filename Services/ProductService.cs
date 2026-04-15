@@ -14,11 +14,11 @@ namespace Product_API.Services
             _repository = repository;
             _cacheService = cacheService;
         }
-        public List<Product> GetAllProducts()
+        public async Task<List<Product>> GetAllProductsAsync()
         {
-            return _repository.GetAllProducts();
+            return await _repository.GetAllProductsAsync();
         }
-        public Product? GetProductById(int id)
+        public async Task<Product?> GetProductByIdAsync(int id)
         {
             var cachedProduct = _cacheService.Get(id);
 
@@ -30,7 +30,7 @@ namespace Product_API.Services
 
             Console.WriteLine($"CACHE MISS for product {id}");
 
-            var product = _repository.GetProductById(id);
+            var product = await _repository.GetProductByIdAsync(id);
 
             if (product != null)
             {
@@ -41,18 +41,18 @@ namespace Product_API.Services
 
         }
 
-        public Product AddProduct(Product product)
+        public async Task<Product> AddProductAsync(Product product)
         {
-            return _repository.AddProduct(product);
+            return await _repository.AddProductAsync(product);
         }
-        public List<Product> SearchProductByName(string name)
+        public async Task<List<Product>> SearchProductByNameAsync(string name)
         {
-            return _repository.SearchProductByName(name);
+            return await _repository.SearchProductByNameAsync(name);
         }
 
-        public Product? UpdateProduct(int id, Product product)
+        public async Task<Product?> UpdateProductAsync(int id, Product product)
         {
-            var updatedProduct = _repository.UpdateProduct(id, product);
+            var updatedProduct = await _repository.UpdateProductAsync(id, product);
             if(updatedProduct != null)
             {
                 _cacheService.Remove(id);
@@ -62,14 +62,14 @@ namespace Product_API.Services
             return updatedProduct;
         }
 
-        public bool DeleteProduct(int id)
+        public async Task<bool> DeleteProductAsync(int id)
         {
-            return _repository.DeleteProduct(id);
+            return await _repository.DeleteProductAsync(id);
         }
 
-        public PagedResponse<Product> GetProducts(int pageNumber, int pageSize, string? category, double? minPrice, double? maxPrice)
+        public async Task<PagedResponse<Product>> GetProductsAsync(int pageNumber, int pageSize, string? category, double? minPrice, double? maxPrice)
         {
-            return _repository.GetProducts(pageNumber, pageSize, category, minPrice, maxPrice);
+            return await _repository.GetProductsAsync(pageNumber, pageSize, category, minPrice, maxPrice);
         }
     }
 }

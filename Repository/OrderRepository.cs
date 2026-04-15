@@ -7,14 +7,15 @@ namespace Product_API.Repository
     {
         List<Order> orders = new();
 
-        public Order AddOrder(Order order)
+        public async Task<Order> AddOrderAsync(Order order)
         {
+            await Task.Delay(50);
             orders.Add(order);
 
             return order;
         }
 
-        public List<Order> GetAllOrders()
+        public async Task<List<Order>> GetAllOrdersAsync()
         {
             return orders;
         }

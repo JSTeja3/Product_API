@@ -4,8 +4,8 @@ namespace Product_API.IRepository
 {
     public interface IOrderRepository
     {
-        Order AddOrder(Order order);
+        Task<Order> AddOrderAsync(Order order);
 
-        List<Order> GetAllOrders();
+        Task<List<Order>> GetAllOrdersAsync();
     }
 }

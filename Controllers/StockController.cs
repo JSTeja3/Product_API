@@ -16,9 +16,9 @@ namespace Product_API.Controllers
         }
 
         [HttpGet("{id}/availability")]
-        public IActionResult IsInStock(int id)
+        public async Task<IActionResult> IsInStock(int id)
         {
-            bool available = _stockService.IsInStock(id);
+            bool available = await _stockService.IsInStockAsync(id);
 
             return Ok(new
             {
@@ -28,9 +28,9 @@ namespace Product_API.Controllers
         }
 
         [HttpGet("{id}/update")]
-        public IActionResult UpdateStock(int id, [FromQuery]int quantity)
+        public async Task<IActionResult> UpdateStock(int id, [FromQuery]int quantity)
         {
-            Product? product = _stockService.UpdateStock(id, quantity);
+            Product? product = await _stockService.UpdateStockAsync(id, quantity);
             if(product == null)
             {
                 return Conflict("Product doesn't exist or requested quantity is not available");
