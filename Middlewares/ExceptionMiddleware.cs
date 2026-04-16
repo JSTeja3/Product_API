@@ -6,10 +6,12 @@ namespace Product_API.Middlewares
     public class ExceptionMiddleware
     {
         private readonly RequestDelegate _next;
+        private readonly ILogger<ExceptionMiddleware> _logger;
 
-        public ExceptionMiddleware(RequestDelegate next)
+        public ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddleware> logger)
         {
             this._next = next;
+            this._logger = logger;
         }
 
         public async Task InvokeAsync(HttpContext context)
@@ -20,7 +22,7 @@ namespace Product_API.Middlewares
             }
             catch(Exception ex)
             {
-                Console.WriteLine($"[ERROR] message: {ex.Message}");
+                _logger.LogError(ex, "Unhandled exception for Path {Path} at {Timestamp}", context.Request.Path, DateTime.Now);
                 context.Response.StatusCode = StatusCodes.Status500InternalServerError;
                 context.Response.ContentType  = "application/json";
 

@@ -6,13 +6,15 @@ namespace Product_API.Services
 {
     public class ProductService : IProductService
     {
-        private IProductRepository _repository;
-        private IProductCacheService _cacheService;
+        private readonly IProductRepository _repository;
+        private readonly IProductCacheService _cacheService;
+        private readonly ILogger<ProductService> _logger;
 
-        public ProductService(IProductRepository repository, IProductCacheService cacheService)
+        public ProductService(IProductRepository repository, IProductCacheService cacheService, ILogger<ProductService> logger)
         {
             _repository = repository;
             _cacheService = cacheService;
+            _logger = logger;
         }
         public async Task<List<Product>> GetAllProductsAsync()
         {
@@ -24,11 +26,11 @@ namespace Product_API.Services
 
             if (cachedProduct != null)
             {
-                Console.WriteLine($"CACHE HIT for product {id}");
+                _logger.LogInformation("Cache hit for ProductId {ProductId}",id);
                 return cachedProduct;
             }
 
-            Console.WriteLine($"CACHE MISS for product {id}");
+            _logger.LogInformation("Cache miss for ProductId {ProductId}",id);
 
             var product = await _repository.GetProductByIdAsync(id);
 
@@ -57,6 +59,7 @@ namespace Product_API.Services
             {
                 _cacheService.Remove(id);
                 _cacheService.Set(updatedProduct);
+                _logger.LogInformation("Cache updated for ProductId {ProductId}",id);
             }
 
             return updatedProduct;

@@ -7,7 +7,7 @@ namespace Product_API.Services
     public class StockService:IStockService
     {
 
-        private IProductRepository _repository;
+        private readonly IProductRepository _repository;
 
         public StockService(IProductRepository repository)
         {
