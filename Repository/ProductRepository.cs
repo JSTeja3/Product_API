@@ -14,12 +14,12 @@ namespace Product_API.Repository
         };
         public async Task<List<Product>> GetAllProductsAsync()
         {
-            await Task.Delay(100);
+            await Task.Delay(1000);
             return products.ToList();
         }
         public async Task<Product?> GetProductByIdAsync(int id)
         {
-            await Task.Delay(50);
+            await Task.Delay(100);
             Product? product = products.FirstOrDefault(p => p.Id == id);
             return product;
         }
