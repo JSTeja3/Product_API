@@ -52,6 +52,7 @@ namespace Product_API.Services
 
             var order = new Order
             {
+                OrderId = 55,
                 ProductId = productId,
                 Quantity = quantity,
                 Status = "Placed"
