@@ -1,8 +1,8 @@
 using Product_API.Models;
 
-namespace Product_API.IRepository
+namespace Product_API.Services.Interface
 {
-    public interface IProductRepository
+    public interface IProductService
     {
         Task<List<Product>> GetAllProductsAsync();
 
@@ -16,6 +16,7 @@ namespace Product_API.IRepository
 
         Task<bool> DeleteProductAsync(int id);
 
-        Task<PagedResponse<Product>> GetProductsAsync(int pageNumber, int pageSize, string? category, double? minPrice, double? maxPrice); 
+        Task<PagedResponse<Product>> GetProductsAsync(int pageNumber, int pageSize, string? category, double? minPrice, double? maxPrice);
+        
     }
 }

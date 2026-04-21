@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Product_API.Models;
-using Product_API.IServices;
+using Product_API.Services.Interface;
 
 namespace Product_API.Controllers
 {
