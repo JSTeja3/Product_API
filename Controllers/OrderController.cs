@@ -16,6 +16,12 @@ namespace Product_API.Controllers
             _orderService = orderService;
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetOrders(){
+            var orders = await _orderService.GetOrdersAsync();
+            return Ok(orders);
+        }
+
         [HttpPost]
         public async Task<IActionResult> PlaceOrder([FromQuery] int productId, [FromQuery] int quantity)
         {

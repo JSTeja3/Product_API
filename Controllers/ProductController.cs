@@ -17,7 +17,7 @@ namespace Product_API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllProducts()
         {
-            List<Product> products = await this._productService.GetAllProductsAsync();
+            var products = await this._productService.GetAllProductsAsync();
             return Ok(products);
             //throw new InvalidOperationException("Database connection timeout");
         }

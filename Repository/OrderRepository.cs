@@ -24,7 +24,7 @@ namespace Product_API.Repository
 
         public async Task<List<Order>> GetAllOrdersAsync()
         {
-            var orders = await _dbContext.Orders.ToListAsync();
+            var orders = await _dbContext.Orders.Include(o=>o.Product).AsNoTracking().ToListAsync();
             return orders;
         }
     }

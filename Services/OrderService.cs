@@ -21,6 +21,11 @@ namespace Product_API.Services
             _logger = logger;
         }
 
+        public async Task<List<Order>> GetOrdersAsync()
+        {
+            return  await _orderRepo.GetAllOrdersAsync();
+        } 
+
         public async Task<Order?> PlaceOrderAsync(int productId, int quantity)
         {
             _logger.LogInformation( "Order placement started for ProductId {ProductId} Quantity {Quantity} at {Timestamp}", productId, quantity, DateTime.UtcNow);
@@ -52,10 +57,10 @@ namespace Product_API.Services
 
             var order = new Order
             {
-                OrderId = 55,
-                ProductId = productId,
+                OrderId = new Random().Next(),
                 Quantity = quantity,
-                Status = "Placed"
+                Status = "Placed",
+                ProductId = productId
 
             };
             var createdOrder = await _orderRepo.AddOrderAsync(order);

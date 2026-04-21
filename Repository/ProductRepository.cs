@@ -15,11 +15,11 @@ namespace Product_API.Repository
         }
         public async Task<List<Product>> GetAllProductsAsync()
         {
-            return await _dbContext.Products.ToListAsync();
+            return await _dbContext.Products.AsNoTracking().ToListAsync();
         }
         public async Task<Product?> GetProductByIdAsync(int id)
         {
-            return await _dbContext.Products.FindAsync(id);
+            return await _dbContext.Products.FirstOrDefaultAsync(p=>p.Id==id);
         }
 
         public async Task<Product> AddProductAsync(Product product)
@@ -31,7 +31,7 @@ namespace Product_API.Repository
         }
         public async Task<List<Product>> SearchProductByNameAsync(string name)
         {
-            var products = await _dbContext.Products.Where(p => p.Name.ToLower().Contains(name.ToLower())).ToListAsync();
+            var products = await _dbContext.Products.AsNoTracking().Where(p => p.Name.ToLower().Contains(name.ToLower())).ToListAsync();
             return products;
         }
 
