@@ -1,8 +1,11 @@
+using Microsoft.EntityFrameworkCore;
 using Product_API.IServices;
 using Product_API.Services;
 using Product_API.Middlewares;
 using Product_API.IRepository;
 using Product_API.Repository;
+using Product_API.Data;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +18,8 @@ builder.Services.AddScoped<IStockService, StockService>();
 builder.Services.AddScoped<IDiscountStrategy, FestivalDiscount>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<IProductCacheService, ProductCacheService>();
+builder.Services.AddDbContext<AppDbContext>(options=>options.UseInMemoryDatabase("ReplicaDb"));
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 

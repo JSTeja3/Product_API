@@ -4,6 +4,7 @@ namespace Product_API.IServices
 {
     public interface IOrderService
     {
-        Order? PlaceOrder(int productId, int quantity);
+        Task<List<Order>> GetOrdersAsync();
+        Task<Order?> PlaceOrderAsync(int productId, int quantity);   
     }
 }

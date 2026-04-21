@@ -1,41 +1,45 @@
 using Product_API.Models;
 using Product_API.IRepository;
+using Product_API.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace Product_API.Repository
 {
     public class ProductRepository : IProductRepository
     {
-        private static List<Product> products = new List<Product>
-        {
-            new Product { Id=1, Name="Chair-WH001-35X25X60", Price=655.56, Category="Dining", Stock=25},
-            new Product { Id=2, Name="Table-BL001-105X102X45", Price=2555.25, Category="Dining", Stock=5},
-            new Product { Id=3, Name="Lamp-BE001-6X15", Price=230.23, Category="Bed", Stock=0}
+        private readonly AppDbContext _dbContext;
 
-        };
-        public List<Product> GetAllProducts()
+        public ProductRepository(AppDbContext dbContext)
         {
+            _dbContext = dbContext;
+        }
+        public async Task<List<Product>> GetAllProductsAsync()
+        {
+            return await _dbContext.Products.AsNoTracking().ToListAsync();
+        }
+        public async Task<Product?> GetProductByIdAsync(int id)
+        {
+            return await _dbContext.Products.FirstOrDefaultAsync(p=>p.Id==id);
+        }
+
+        public async Task<Product> AddProductAsync(Product product)
+        {
+            await _dbContext.Products.AddAsync(product);
+            await _dbContext.SaveChangesAsync();
+
+            return product;
+        }
+        public async Task<List<Product>> SearchProductByNameAsync(string name)
+        {
+            var products = await _dbContext.Products.AsNoTracking().Where(p => p.Name.ToLower().Contains(name.ToLower())).ToListAsync();
             return products;
         }
-        public Product? GetProductById(int id)
-        {
-            Product? product = products.FirstOrDefault(p => p.Id == id);
-            return product;
-        }
 
-        public Product AddProduct(Product product)
+        public async Task<Product?> UpdateProductAsync(int id, Product product)
         {
-            products.Add(product);
-            return product;
-        }
-        public List<Product> SearchProductByName(string name)
-        {
-            List<Product> result = products.Where(p => p.Name.Contains(name, StringComparison.OrdinalIgnoreCase)).ToList();
-            return result;
-        }
+            await Task.Delay(50);
 
-        public Product? UpdateProduct(int id, Product product)
-        {
-            Product? existingProduct = products.FirstOrDefault(p => p.Id == id);
+            var existingProduct = await _dbContext.Products.FindAsync(product.Id);
 
             if (existingProduct == null)
             {
@@ -47,29 +51,34 @@ namespace Product_API.Repository
             existingProduct.Stock = product.Stock;
             existingProduct.UpdatedAt = DateTime.Now;
 
+            await _dbContext.SaveChangesAsync();
+
             return existingProduct;
         }
 
-        public bool DeleteProduct(int id)
+        public async Task<bool> DeleteProductAsync(int id)
         {
-            var existingProduct = products.FirstOrDefault(p => p.Id == id);
+            var existingProduct = await _dbContext.Products.FindAsync(id);
             if (existingProduct == null)
             {
                 return false;
             }
 
-            products.Remove(existingProduct);
+            _dbContext.Products.Remove(existingProduct);
+            await _dbContext.SaveChangesAsync();
+
+
 
             return true;
         }
 
-        public PagedResponse<Product> GetProducts(int pageNumber, int pageSize, string? category, double? minPrice, double? maxPrice)
+        public async Task<PagedResponse<Product>> GetProductsAsync(int pageNumber, int pageSize, string? category, double? minPrice, double? maxPrice)
         {
-            var query = products.AsQueryable();
+            var query = _dbContext.Products.AsNoTracking().AsQueryable();
             if (!string.IsNullOrWhiteSpace(category))
             {
                 query = query.Where(p =>
-                    p.Category.Equals(category, StringComparison.OrdinalIgnoreCase));
+                    p.Category.ToLower() == category.ToLower());
             }
 
             if (minPrice.HasValue)
@@ -82,9 +91,9 @@ namespace Product_API.Repository
                 query = query.Where(p => p.Price <= maxPrice.Value);
             }
 
-            var totalCount = query.Count();
+            var totalCount = await query.CountAsync();
 
-            var pagedProducts = query.Skip((pageNumber-1)*pageSize).Take(pageSize).ToList();
+            var pagedProducts = await query.Skip((pageNumber-1)*pageSize).Take(pageSize).ToListAsync();
 
             return new PagedResponse<Product>
             {

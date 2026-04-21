@@ -6,43 +6,73 @@ namespace Product_API.Services
 {
     public class ProductService : IProductService
     {
-        private IProductRepository _repository;
+        private readonly IProductRepository _repository;
+        private readonly IProductCacheService _cacheService;
+        private readonly ILogger<ProductService> _logger;
 
-        public ProductService(IProductRepository repository)
+        public ProductService(IProductRepository repository, IProductCacheService cacheService, ILogger<ProductService> logger)
         {
             _repository = repository;
+            _cacheService = cacheService;
+            _logger = logger;
         }
-        public List<Product> GetAllProducts()
+        public async Task<List<Product>> GetAllProductsAsync()
         {
-            return _repository.GetAllProducts();
+            return await _repository.GetAllProductsAsync();
         }
-        public Product? GetProductById(int id)
+        public async Task<Product?> GetProductByIdAsync(int id)
         {
-            return _repository.GetProductById(id);
+            var cachedProduct = _cacheService.Get(id);
+
+            if (cachedProduct != null)
+            {
+                _logger.LogInformation("Cache hit for ProductId {ProductId}",id);
+                return cachedProduct;
+            }
+
+            _logger.LogInformation("Cache miss for ProductId {ProductId}",id);
+
+            var product = await _repository.GetProductByIdAsync(id);
+
+            if (product != null)
+            {
+                _cacheService.Set(product);
+            }
+
+            return product;
+
         }
 
-        public Product AddProduct(Product product)
+        public async Task<Product> AddProductAsync(Product product)
         {
-            return _repository.AddProduct(product);
+            return await _repository.AddProductAsync(product);
         }
-        public List<Product> SearchProductByName(string name)
+        public async Task<List<Product>> SearchProductByNameAsync(string name)
         {
-            return _repository.SearchProductByName(name);
-        }
-
-        public Product? UpdateProduct(int id, Product product)
-        {
-            return _repository.UpdateProduct(id, product);
+            return await _repository.SearchProductByNameAsync(name);
         }
 
-        public bool DeleteProduct(int id)
+        public async Task<Product?> UpdateProductAsync(int id, Product product)
         {
-            return _repository.DeleteProduct(id);
+            var updatedProduct = await _repository.UpdateProductAsync(id, product);
+            if(updatedProduct != null)
+            {
+                _cacheService.Remove(id);
+                _cacheService.Set(updatedProduct);
+                _logger.LogInformation("Cache updated for ProductId {ProductId}",id);
+            }
+
+            return updatedProduct;
         }
 
-        public PagedResponse<Product> GetProducts(int pageNumber, int pageSize, string? category, double? minPrice, double? maxPrice)
+        public async Task<bool> DeleteProductAsync(int id)
         {
-            return _repository.GetProducts(pageNumber, pageSize, category, minPrice, maxPrice);
+            return await _repository.DeleteProductAsync(id);
+        }
+
+        public async Task<PagedResponse<Product>> GetProductsAsync(int pageNumber, int pageSize, string? category, double? minPrice, double? maxPrice)
+        {
+            return await _repository.GetProductsAsync(pageNumber, pageSize, category, minPrice, maxPrice);
         }
     }
 }

@@ -7,15 +7,15 @@ namespace Product_API.Services
     public class StockService:IStockService
     {
 
-        private IProductRepository _repository;
+        private readonly IProductRepository _repository;
 
         public StockService(IProductRepository repository)
         {
             _repository = repository;
         }
-        public bool IsInStock(int productId)
+        public async Task<bool> IsInStockAsync(int productId)
         {
-            Product? product = _repository.GetProductById(productId);
+            Product? product = await _repository.GetProductByIdAsync(productId);
 
             if(product == null || !product.IsInStock())
             {
@@ -24,9 +24,9 @@ namespace Product_API.Services
             return true;
         }
 
-        public Product? UpdateStock(int productId, int quantity)
+        public async Task<Product?> UpdateStockAsync(int productId, int quantity)
         {
-            Product? product = _repository.GetProductById(productId);
+            Product? product = await _repository.GetProductByIdAsync(productId);
             if(product != null && quantity>=0)
             {
                 product.UpdateStock(quantity);

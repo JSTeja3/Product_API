@@ -1,21 +1,30 @@
 using Product_API.Models;
 using Product_API.IRepository;
+using Product_API.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace Product_API.Repository
 {
     public class OrderRepository: IOrderRepository
     {
-        List<Order> orders = new();
+        private readonly AppDbContext _dbContext;
 
-        public Order AddOrder(Order order)
+        public OrderRepository(AppDbContext dbContext)
         {
-            orders.Add(order);
+            _dbContext = dbContext;
+        }
+
+        public async Task<Order> AddOrderAsync(Order order)
+        {
+            await _dbContext.Orders.AddAsync(order);
+            await _dbContext.SaveChangesAsync();
 
             return order;
         }
 
-        public List<Order> GetAllOrders()
+        public async Task<List<Order>> GetAllOrdersAsync()
         {
+            var orders = await _dbContext.Orders.Include(o=>o.Product).AsNoTracking().ToListAsync();
             return orders;
         }
     }
