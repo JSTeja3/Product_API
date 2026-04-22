@@ -49,7 +49,7 @@ namespace Product_API.Repository
             existingProduct.Price = product.Price;
             existingProduct.Category = product.Category;
             existingProduct.Stock = product.Stock;
-            existingProduct.UpdatedAt = DateTime.Now;
+            existingProduct.UpdatedAt = DateTime.UtcNow;
 
             await _dbContext.SaveChangesAsync();
 

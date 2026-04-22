@@ -30,7 +30,7 @@ namespace Product_API.Services
             if(product != null && quantity>=0)
             {
                 product.UpdateStock(quantity);
-                product.UpdatedAt = DateTime.Now;
+                product.UpdatedAt = DateTime.UtcNow;
             }
             return product;
         }
