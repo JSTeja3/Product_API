@@ -24,12 +24,14 @@ builder.Services.AddScoped<IDiscountStrategy, FestivalDiscount>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IProductCacheService, ProductCacheService>();
+builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<ITokenRepository, TokenRepository>();
 builder.Services.AddDbContext<AppDbContext>(options=>options.UseInMemoryDatabase("ReplicaDb"));
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 
 
-var key = "THIS_IS_MY_SUPER_SECURE_SECRET_KEY_1234567890_ABC"; // keep simple for now
+var jwt = builder.Configuration.GetSection("JWT");
+var key = jwt["Key"] ?? throw new InvalidOperationException("JWT Key is not configured.");
 
 builder.Services.AddAuthentication(options =>
 {
@@ -40,10 +42,12 @@ builder.Services.AddAuthentication(options =>
 {
     options.TokenValidationParameters = new TokenValidationParameters
     {
-        ValidateIssuer = false,
-        ValidateAudience = false,
+        ValidateIssuer = true,
+        ValidateAudience = true,
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        ValidAudience = builder.Configuration["Jwt:Audience"],
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key))
     };
 });

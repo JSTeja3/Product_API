@@ -1,40 +1,57 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
+using Product_API.Services.Interface;
 
-[ApiController]
-[Route("auth")]
-public class AuthController : ControllerBase
+namespace Product_API.Controllers
 {
-    private readonly string _key = "THIS_IS_MY_SUPER_SECURE_SECRET_KEY_1234567890_ABC";
-
-    [HttpPost("login")]
-    public IActionResult Login(string username, string password)
+    [ApiController]
+    [Route("auth")]
+    public class AuthController : ControllerBase
     {
-        if (username != "admin" || password != "123")
+        private readonly ITokenService _tokenService;
+
+        public AuthController(ITokenService tokenService)
         {
-            return Unauthorized();
+            _tokenService = tokenService;
         }
 
-        var claims = new[]
+        [HttpPost("login")]
+        public async Task<IActionResult> Login(string userId, string password)
         {
-            new Claim(ClaimTypes.Name, username),
-            new Claim(ClaimTypes.Role, "Admin")
-        };
+            if (userId != "admin" || password != "123")
+                return Unauthorized();
 
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_key));
-        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            var accessToken = _tokenService.GenerateAccessToken(userId);
+            var refreshToken = await _tokenService.GenerateRefreshTokenandSaveAsync(userId);
 
-        var token = new JwtSecurityToken(
-            claims: claims,
-            expires: DateTime.UtcNow.AddHours(1),
-            signingCredentials: creds
-        );
 
-        var jwt = new JwtSecurityTokenHandler().WriteToken(token);
 
-        return Ok(new { token = jwt });
+            return Ok(new
+            {
+                accessToken,
+                refreshToken
+
+            });
+
+
+        }
+
+        [HttpPost("refresh")]
+        public async Task<IActionResult> Refresh(string userId, string refreshToken)
+        {
+            bool isValid = await _tokenService.ValidateRefreshToken(userId, refreshToken);
+            if (!isValid)
+            {
+                return Unauthorized();
+            }
+            var newAccessToken = _tokenService.GenerateAccessToken(userId);
+
+            return Ok(new
+            {
+                accessToken = newAccessToken
+            });
+
+
+        }
+        
     }
 }
