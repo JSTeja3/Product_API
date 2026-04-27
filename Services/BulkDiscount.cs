@@ -3,7 +3,7 @@ using Product_API.Services.Interface;
 
 namespace Product_API.Services
 {
-    public class BulkDiscount : IDiscountStrategy
+    public class BulkDiscount : IDiscountService
     {
         public double ApplyDiscount(Product product)
         {

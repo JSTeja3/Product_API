@@ -3,7 +3,7 @@ using Product_API.Services.Interface;
 
 namespace Product_API.Services
 {
-    public class FestivalDiscount : IDiscountStrategy
+    public class FestivalDiscount : IDiscountService
     {
         public double ApplyDiscount(Product product)
         {

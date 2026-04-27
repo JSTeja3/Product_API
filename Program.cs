@@ -20,7 +20,7 @@ builder.Services.AddControllers();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IStockService, StockService>();
-builder.Services.AddScoped<IDiscountStrategy, FestivalDiscount>();
+builder.Services.AddScoped<IDiscountService, FestivalDiscount>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IProductCacheService, ProductCacheService>();

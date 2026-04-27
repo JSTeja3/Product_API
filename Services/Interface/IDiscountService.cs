@@ -2,7 +2,7 @@ using Product_API.Models;
 
 namespace Product_API.Services.Interface
 {
-    public interface IDiscountStrategy
+    public interface IDiscountService
     {
         double ApplyDiscount(Product product);
     }

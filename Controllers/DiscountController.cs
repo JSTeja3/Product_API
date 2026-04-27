@@ -8,10 +8,10 @@ namespace Product_API.Controllers
     [Route("discounts")]
     public class DiscountController : ControllerBase
     {
-        private readonly IDiscountStrategy _discountService;
+        private readonly IDiscountService _discountService;
         private readonly IProductService _productService;
 
-        public DiscountController(IDiscountStrategy discountService, IProductService productService)
+        public DiscountController(IDiscountService discountService, IProductService productService)
         {
             _discountService = discountService;
             _productService = productService;

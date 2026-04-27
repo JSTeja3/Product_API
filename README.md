@@ -27,6 +27,8 @@ A production-style ASP.NET Core Web API built to simulate a **retail inventory a
 - Middleware Pipeline  
 - Concurrency Handling  
 - Performance Optimization  
+- JWT Authentications
+- Refresh Tokens Flow
 
 ---
 
@@ -47,6 +49,18 @@ A production-style ASP.NET Core Web API built to simulate a **retail inventory a
 ### ⚡ Caching
 - Cache-aside pattern for product retrieval
 - Cache invalidation on updates
+
+### 🔐 Authentication & Authorization 
+- JWT-based authentication for securing APIs  
+- Role-based authorization using `[Authorize]`  
+- Token validation using issuer, audience, and signing key  
+- Secure access to protected endpoints  
+
+### 🔄 Refresh Token Management 
+- Refresh tokens for seamless re-authentication  
+- Short-lived access tokens with long-lived refresh tokens  
+- Refresh token validation and expiry handling  
+- Stored using EF Core InMemory database (extendable to real DB)  
 
 ### 🔄 Async API
 - Full async flow using Task-based programming
@@ -78,6 +92,7 @@ Controller → Service → Repository → EF Core → In-Memory DataBase
 
 Modules:
 
+- Authentication
 - Products
 - Stock / Inventory
 - Orders
@@ -95,6 +110,7 @@ ProductApi
 │   └── StockController.cs
 │   └── DiscountController.cs
 │   └── OrderContoller.cs
+│   └── AuthController.cs
 |
 |
 ├── Services
@@ -104,6 +120,7 @@ ProductApi
 |   │   └── IDiscountService.cs
 |   │   └── IOrderService.cs
 |   │   └── IProductCacheService.cs
+|   │   └── ITokenService.cs
 |   |
 │   └── ProductService.cs
 │   └── StockService.cs
@@ -111,15 +128,18 @@ ProductApi
 │   └── FestivalDiscount.cs
 │   └── BulkDiscount.cs
 │   └── ProductCacheService.cs
+│   └── TokenService.cs
 |
 |
 ├── Repository
 │   ├── Interfaces/
 |   │   └── IProductRepository.cs
 |   │   └── IOrderRepository.cs
+|   │   └── ITokenRepository.cs
 |   |
 │   └── ProductRepository.cs
 │   └── OrderRepository.cs
+│   └── TokenRepository.cs
 │
 |
 ├── Models
@@ -127,6 +147,7 @@ ProductApi
 │   └── Product.cs
 │   └── Order.cs
 │   └── PagedResponse.cs
+│   └── RefreshToken.cs
 |
 |
 ├── Middlewares
@@ -165,16 +186,22 @@ ProductApi
 * `GET /stocks/{id}/availability`
 * `GET /stocks/{id}/update`
 
+
 ### ✅ Discount
 
 * `GET /discounts/{id}`
 
-### ✅ Orders
 
+### ✅ Orders
 
 * `Get /orders`
 * `POST /orders`
 * `POST /orders/simulate-concurrent-orders`
+
+### ✅ Auth
+
+* `POST /auth/login`
+* `POST /auth/refresh`
 
 
 
