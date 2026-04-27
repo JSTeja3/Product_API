@@ -1,6 +1,6 @@
 using Product_API.Models;
 
-namespace Product_API.IRepository
+namespace Product_API.Repository.Interface
 {
     public interface IOrderRepository
     {

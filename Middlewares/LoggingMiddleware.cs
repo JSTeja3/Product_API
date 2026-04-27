@@ -17,7 +17,7 @@ namespace Product_API.Middlewares
         public async Task InvokeAsync(HttpContext context)
         {
             var timeStamp = Stopwatch.StartNew();
-            _logger.LogInformation($"[REQUEST] {context.Request.Method} {context.Request.Path} {DateTime.Now:hh:mm:ss tt}");
+            _logger.LogInformation($"[REQUEST] {context.Request.Method} {context.Request.Path} {DateTime.UtcNow:hh:mm:ss tt}");
 
             await _next(context);
 

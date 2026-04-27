@@ -2,18 +2,85 @@
 
 A production-style ASP.NET Core Web API built to simulate a **retail inventory and order management backend**.
 
-This project started as a simple Product CRUD API and has been progressively enhanced using **clean architecture, SOLID principles, middleware, repository pattern, pagination, filtering, inventory, and order placement workflows**.
-
 
 ---
 
 ## 🛠️ Tech Stack
 
-* **ASP.NET Core Web API**
+* **ASP.NET Core Web API(.NET 8)**
 * **C#**
 * **Swagger / OpenAPI**
-* **In-memory data storage**
+* **Entity FrameWork Core(EF Core 8)**
+* **In-Memory Database (for development)**
 * **Visual Studio Code**
+
+---
+
+## 🧠 Key Concepts Applied
+
+- SOLID Principles  
+- Repository Pattern  
+- Dependency Injection  
+- Async / Await  
+- EF Core (`AsNoTracking`, `Include`)  
+- Cache-Aside Pattern  
+- Middleware Pipeline  
+- Concurrency Handling  
+- Performance Optimization  
+- JWT Authentications
+- Refresh Tokens Flow
+
+---
+
+## 📘 Features
+
+### 📦 Product Management
+- CRUD operations for products
+- Pagination and filtering
+
+### 🛒 Order Management
+- Place orders
+- Stock validation before order creation
+
+### 📊 Inventory Management
+- Check stock availability
+- Update stock safely
+
+### ⚡ Caching
+- Cache-aside pattern for product retrieval
+- Cache invalidation on updates
+
+### 🔐 Authentication & Authorization 
+- JWT-based authentication for securing APIs  
+- Role-based authorization using `[Authorize]`  
+- Token validation using issuer, audience, and signing key  
+- Secure access to protected endpoints  
+
+### 🔄 Refresh Token Management 
+- Refresh tokens for seamless re-authentication  
+- Short-lived access tokens with long-lived refresh tokens  
+- Refresh token validation and expiry handling  
+- Stored using EF Core InMemory database (extendable to real DB)  
+
+### 🔄 Async API
+- Full async flow using Task-based programming
+
+### 🗄️ Database Integration
+- EF Core with DbContext
+- Async queries (`ToListAsync`, `FindAsync`)
+
+### 📝 Logging
+- Structured logging using `ILogger`
+- Request + business event logging
+
+### 🔒 Concurrency Handling
+- Prevents overselling using locking
+- Returns proper HTTP responses (`409 Conflict`)
+
+### 🚀 Performance Optimization
+- Latency tracking via middleware
+- Cache vs DB performance comparison
+- `AsNoTracking` for faster read operations
 
 ---
 
@@ -21,10 +88,11 @@ This project started as a simple Product CRUD API and has been progressively enh
 
 Current layered architecture:
 
-Controller → Service → Repository → In-Memory Data
+Controller → Service → Repository → EF Core → In-Memory DataBase
 
 Modules:
 
+- Authentication
 - Products
 - Stock / Inventory
 - Orders
@@ -42,47 +110,64 @@ ProductApi
 │   └── StockController.cs
 │   └── DiscountController.cs
 │   └── OrderContoller.cs
+│   └── AuthController.cs
 |
-├── IServices
-│   └── IProductService.cs
-│   └── IStockService.cs
-│   └── IDiscountService.cs
-│   └── IOrderService.cs
 |
 ├── Services
+│   ├── Interfaces/
+|   │   └── IProductService.cs
+|   │   └── IStockService.cs
+|   │   └── IDiscountService.cs
+|   │   └── IOrderService.cs
+|   │   └── IProductCacheService.cs
+|   │   └── ITokenService.cs
+|   |
 │   └── ProductService.cs
 │   └── StockService.cs
-│   └── DiscountService.cs
 │   └── OrderService.cs
+│   └── FestivalDiscount.cs
+│   └── BulkDiscount.cs
+│   └── ProductCacheService.cs
+│   └── TokenService.cs
 |
-├── IRepository
-│   └── IProductRepository.cs
-│   └── IOrderRepository.cs
 |
 ├── Repository
+│   ├── Interfaces/
+|   │   └── IProductRepository.cs
+|   │   └── IOrderRepository.cs
+|   │   └── ITokenRepository.cs
+|   |
 │   └── ProductRepository.cs
 │   └── OrderRepository.cs
+│   └── TokenRepository.cs
 │
+|
 ├── Models
 │   └── BaseEntity.cs
 │   └── Product.cs
 │   └── Order.cs
 │   └── PagedResponse.cs
+│   └── RefreshToken.cs
+|
 |
 ├── Middlewares
 │   └── ExceptionMiddleware.cs
 │   └── LoggingMiddleware.cs
 │
+|
+├── Data
+│   └── AppDbContext.cs
+|
+|
 ├── Program.cs
 │
+|
 └── README.md
 ```
 
 ---
 
-## 📘 Features
-
-Implemented endpoints:
+## Implemented endpoints:
 
 ### ✅ Products
 
@@ -93,7 +178,7 @@ Implemented endpoints:
 * `GET /products/search?name={value}`
 * `PUT /products/{id}`
 * `Delete /products/{id}`
-* `GET /products?pageNumber={value}&pageSize={value}&category={value}&minprice={value}&maxprice={value}`
+* `GET /products/filters?pageNumber={value}&pageSize={value}&category={value}&minprice={value}&maxprice={value}`
 
 
 ### ✅ Stock
@@ -101,14 +186,22 @@ Implemented endpoints:
 * `GET /stocks/{id}/availability`
 * `GET /stocks/{id}/update`
 
+
 ### ✅ Discount
 
 * `GET /discounts/{id}`
 
+
 ### ✅ Orders
 
-
+* `Get /orders`
 * `POST /orders`
+* `POST /orders/simulate-concurrent-orders`
+
+### ✅ Auth
+
+* `POST /auth/login`
+* `POST /auth/refresh`
 
 
 

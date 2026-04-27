@@ -1,5 +1,5 @@
 using Product_API.Models;
-using Product_API.IRepository;
+using Product_API.Repository.Interface;
 using Product_API.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -49,7 +49,7 @@ namespace Product_API.Repository
             existingProduct.Price = product.Price;
             existingProduct.Category = product.Category;
             existingProduct.Stock = product.Stock;
-            existingProduct.UpdatedAt = DateTime.Now;
+            existingProduct.UpdatedAt = DateTime.UtcNow;
 
             await _dbContext.SaveChangesAsync();
 

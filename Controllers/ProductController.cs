@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Product_API.Models;
-using Product_API.IServices;
+using Product_API.Services.Interface;
+using Microsoft.AspNetCore.Authorization;
+
 
 namespace Product_API.Controllers
 {
@@ -14,6 +16,7 @@ namespace Product_API.Controllers
             this._productService = productService;   
         }
 
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetAllProducts()
         {
@@ -22,6 +25,7 @@ namespace Product_API.Controllers
             //throw new InvalidOperationException("Database connection timeout");
         }
 
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetProductById(int id)
         {
@@ -34,6 +38,7 @@ namespace Product_API.Controllers
             return Ok(product);
         }
 
+        [Authorize(Roles="Admin")]
         [HttpPost]
         public async Task<IActionResult> AddProduct(Product product)
         {
@@ -47,6 +52,7 @@ namespace Product_API.Controllers
             return CreatedAtAction(nameof(GetProductById), new{id=product.Id}, createdProduct);
         }
 
+        [Authorize]
         [HttpGet("search")]
         public async Task<IActionResult> SearchProductByName(string name)
         {
@@ -54,6 +60,7 @@ namespace Product_API.Controllers
             return Ok(products);
         }
 
+        [Authorize(Roles="Admin")]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateProduct(int id, Product product)
         {
@@ -71,6 +78,7 @@ namespace Product_API.Controllers
             return Ok(updateProduct);
         }
 
+        [Authorize(Roles="Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProduct(int id)
         {
@@ -83,6 +91,7 @@ namespace Product_API.Controllers
             return NoContent();
         } 
 
+        [Authorize]
         [HttpGet("filters")]
         public async Task<IActionResult> GetProducts([FromQuery] int pageNumber=1, [FromQuery] int pageSize=10, [FromQuery] string? category=null, [FromQuery] double? minPrice=null, [FromQuery] double? maxPrice=null)
         {

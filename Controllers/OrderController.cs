@@ -1,7 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 
 using Product_API.Models;
-using Product_API.IServices;
+using Product_API.Services.Interface;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Product_API.Controllers
 {
@@ -16,12 +17,15 @@ namespace Product_API.Controllers
             _orderService = orderService;
         }
 
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetOrders(){
             var orders = await _orderService.GetOrdersAsync();
             return Ok(orders);
         }
 
+
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> PlaceOrder([FromQuery] int productId, [FromQuery] int quantity)
         {
@@ -33,6 +37,7 @@ namespace Product_API.Controllers
             return Ok(order);
         }
 
+        [Authorize(Roles="Admin")]
         [HttpPost("simulate-concurrent-orders")]
         public async Task<IActionResult> SimulateConcurrentOrders()
         {
