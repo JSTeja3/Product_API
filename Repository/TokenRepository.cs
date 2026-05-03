@@ -23,8 +23,10 @@ namespace Product_API.Repository
                 existingToken.UserId = refreshToken.UserId;                 
                 existingToken.Expiry = refreshToken.Expiry;                 
             }
-            
-            await _dbContext.RefreshTokens.AddAsync(refreshToken);
+            else
+            {
+                await _dbContext.RefreshTokens.AddAsync(refreshToken);
+            }
              
             await _dbContext.SaveChangesAsync();
         }
