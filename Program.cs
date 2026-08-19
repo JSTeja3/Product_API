@@ -10,7 +10,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.OpenApi.Models;
 
-
+DotNetEnv.Env.Load();
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,33 +24,36 @@ builder.Services.AddScoped<IDiscountService, FestivalDiscount>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IProductCacheService, ProductCacheService>();
-builder.Services.AddScoped<ITokenService, TokenService>();
-builder.Services.AddScoped<ITokenRepository, TokenRepository>();
-builder.Services.AddDbContext<AppDbContext>(options=>options.UseInMemoryDatabase("ReplicaDb"));
+builder.Services.AddDbContext<AppDbContext>(options => options.UseInMemoryDatabase("ReplicaDb"));
 builder.Services.AddEndpointsApiExplorer();
 
 
-var jwt = builder.Configuration.GetSection("JWT");
-var key = jwt["Key"] ?? throw new InvalidOperationException("JWT Key is not configured.");
+var jwtKey = builder.Configuration["JWT_KEY"] ?? throw new InvalidOperationException("JWT key is not configured.");
+var jwtIssuer = builder.Configuration["JWT_ISSUER"] ?? throw new InvalidOperationException("JWT issuer is not configured.");
+var jwtAudience = builder.Configuration["JWT_AUDIENCE"] ?? throw new InvalidOperationException("JWT audience is not configured.");
 
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-})
-.AddJwtBearer(options =>
-{
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
-        ValidIssuer = builder.Configuration["Jwt:Issuer"],
-        ValidAudience = builder.Configuration["Jwt:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key))
-    };
-});
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+   .AddJwtBearer(options =>
+   {
+       options.TokenValidationParameters = new TokenValidationParameters
+       {
+           ValidateIssuerSigningKey = true,
+           IssuerSigningKey = new SymmetricSecurityKey(
+               Encoding.UTF8.GetBytes(jwtKey)),
+
+           ValidateIssuer = true,
+           ValidIssuer = jwtIssuer,
+
+           ValidateAudience = true,
+           ValidAudience = jwtAudience,
+
+           ValidateLifetime = true,
+
+           ClockSkew = TimeSpan.Zero
+       };
+   });
+
+builder.Services.AddAuthorization();
 
 builder.Services.AddSwaggerGen(options =>
 {
@@ -61,7 +64,7 @@ builder.Services.AddSwaggerGen(options =>
         Scheme = "bearer",
         BearerFormat = "JWT",
         In = ParameterLocation.Header,
-        Description = "Enter JWT token like: Bearer {your token}"
+        Description = "Enter JWT token."
     });
 
     options.AddSecurityRequirement(new OpenApiSecurityRequirement
