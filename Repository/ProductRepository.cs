@@ -31,7 +31,7 @@ namespace Product_API.Repository
         }
         public async Task<List<Product>> SearchProductByNameAsync(string name)
         {
-            var products = await _dbContext.Products.AsNoTracking().Where(p => p.Name.ToLower().Contains(name.ToLower())).ToListAsync();
+            var products = await _dbContext.Products.AsNoTracking().Where(p => p.ProductName.ToLower().Contains(name.ToLower())).ToListAsync();
             return products;
         }
 
@@ -45,10 +45,8 @@ namespace Product_API.Repository
             {
                 return null;
             }
-            existingProduct.Name = product.Name;
-            existingProduct.Price = product.Price;
+            existingProduct.ProductName = product.ProductName;
             existingProduct.Category = product.Category;
-            existingProduct.Stock = product.Stock;
             existingProduct.UpdatedAt = DateTime.UtcNow;
 
             await _dbContext.SaveChangesAsync();
@@ -72,23 +70,13 @@ namespace Product_API.Repository
             return true;
         }
 
-        public async Task<PagedResponse<Product>> GetProductsAsync(int pageNumber, int pageSize, string? category, double? minPrice, double? maxPrice)
+        public async Task<PagedResponse<Product>> GetProductsAsync(int pageNumber, int pageSize, string? category)
         {
             var query = _dbContext.Products.AsNoTracking().AsQueryable();
             if (!string.IsNullOrWhiteSpace(category))
             {
                 query = query.Where(p =>
                     p.Category.ToLower() == category.ToLower());
-            }
-
-            if (minPrice.HasValue)
-            {
-                query = query.Where(p => p.Price >= minPrice.Value);
-            }
-
-            if (maxPrice.HasValue)
-            {
-                query = query.Where(p => p.Price <= maxPrice.Value);
             }
 
             var totalCount = await query.CountAsync();

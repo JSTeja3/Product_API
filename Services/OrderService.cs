@@ -8,16 +8,14 @@ namespace Product_API.Services
     {
         private readonly IOrderRepository _orderRepo;
         private readonly IProductRepository _productRepo;
-        private readonly IStockService _stockService;
         private readonly ILogger<OrderService> _logger;
 
         private static readonly object _stockLock = new();
 
-        public OrderService(IOrderRepository orderRepo, IProductRepository productRepo, IStockService stockService, ILogger<OrderService> logger)
+        public OrderService(IOrderRepository orderRepo, IProductRepository productRepo, ILogger<OrderService> logger)
         {
             _orderRepo = orderRepo;
             _productRepo = productRepo;
-            _stockService = stockService;
             _logger = logger;
         }
 
@@ -37,21 +35,6 @@ namespace Product_API.Services
                 _logger.LogWarning("Order failed. Product not found for ProductId {ProductId}", productId);
 
                 return null;
-            }
-
-            lock (_stockLock)
-            {
-                if (product.Stock <= 0 || product.Stock < quantity)
-                {
-                    _logger.LogWarning("Order rejected due to insufficient stock for ProductId {ProductId}. Requested {Quantity}, Available {AvailableStock}", productId, quantity, product.Stock);
-                    return null;
-                }
-
-                product.UpdateStock(product.Stock-quantity);
-                product.UpdatedAt = DateTime.UtcNow;
-                _logger.LogInformation("Stock reduced for ProductId {ProductId}. RemainingStock {RemainingStock}", productId, product.Stock);
-
-
             }
 
 

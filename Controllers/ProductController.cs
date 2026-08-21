@@ -93,9 +93,9 @@ namespace Product_API.Controllers
 
         [Authorize]
         [HttpGet("filters")]
-        public async Task<IActionResult> GetProducts([FromQuery] int pageNumber=1, [FromQuery] int pageSize=10, [FromQuery] string? category=null, [FromQuery] double? minPrice=null, [FromQuery] double? maxPrice=null)
+        public async Task<IActionResult> GetProducts([FromQuery] int pageNumber=1, [FromQuery] int pageSize=10, [FromQuery] string? category=null)
         {
-            var result = await _productService.GetProductsAsync(pageNumber, pageSize, category, minPrice, maxPrice);
+            var result = await _productService.GetProductsAsync(pageNumber, pageSize, category);
 
             return Ok(result);
         }

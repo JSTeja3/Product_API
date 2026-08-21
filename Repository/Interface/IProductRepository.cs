@@ -16,6 +16,6 @@ namespace Product_API.Repository.Interface
 
         Task<bool> DeleteProductAsync(int id);
 
-        Task<PagedResponse<Product>> GetProductsAsync(int pageNumber, int pageSize, string? category, double? minPrice, double? maxPrice); 
+        Task<PagedResponse<Product>> GetProductsAsync(int pageNumber, int pageSize, string? category); 
     }
 }

@@ -70,9 +70,9 @@ namespace Product_API.Services
             return await _repository.DeleteProductAsync(id);
         }
 
-        public async Task<PagedResponse<Product>> GetProductsAsync(int pageNumber, int pageSize, string? category, double? minPrice, double? maxPrice)
+        public async Task<PagedResponse<Product>> GetProductsAsync(int pageNumber, int pageSize, string? category)
         {
-            return await _repository.GetProductsAsync(pageNumber, pageSize, category, minPrice, maxPrice);
+            return await _repository.GetProductsAsync(pageNumber, pageSize, category);
         }
     }
 }
