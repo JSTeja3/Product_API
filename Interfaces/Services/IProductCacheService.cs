@@ -1,6 +1,6 @@
 using Product_API.Models;
 
-namespace Product_API.Services.Interface
+namespace Product_API.Interfaces.Services
 {
     public interface IProductCacheService
     {

@@ -1,6 +1,8 @@
 using Product_API.Models;
+using Product_API.DTOs.Requests;
+using Product_API.DTOs.Responses;
 
-namespace Product_API.Services.Interface
+namespace Product_API.Interfaces.Services
 {
     public interface IProductService
     {
@@ -8,7 +10,7 @@ namespace Product_API.Services.Interface
 
         Task<Product?> GetProductByIdAsync(int id);
 
-        Task<Product> AddProductAsync(Product product);
+        Task<CreateProductResponse> CreateAsync(CreateProductRequest request);
 
         Task<List<Product>> SearchProductByNameAsync(string name); 
 

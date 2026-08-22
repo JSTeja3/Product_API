@@ -1,5 +1,5 @@
 using Product_API.Models;
-using Product_API.Repository.Interface;
+using Product_API.Interfaces.Repositories;
 using Product_API.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,6 +13,18 @@ namespace Product_API.Repository
         {
             _dbContext = dbContext;
         }
+
+        public async Task<string?> GetLatestProductIdAsync(int year)
+        {
+            string prefix = $"{year}-";
+
+            return await _dbContext.Products
+                        .Where(p=>p.ProductId.StartsWith(prefix))
+                        .OrderByDescending(p=>p.ProductId)
+                        .Select(p=>p.ProductId)
+                        .FirstOrDefaultAsync();
+        }
+
         public async Task<List<Product>> GetAllProductsAsync()
         {
             return await _dbContext.Products.AsNoTracking().ToListAsync();
@@ -22,7 +34,7 @@ namespace Product_API.Repository
             return await _dbContext.Products.FirstOrDefaultAsync(p=>p.Id==id);
         }
 
-        public async Task<Product> AddProductAsync(Product product)
+        public async Task<Product> CreateAsync(Product product)
         {
             await _dbContext.Products.AddAsync(product);
             await _dbContext.SaveChangesAsync();

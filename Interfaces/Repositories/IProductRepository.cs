@@ -1,14 +1,16 @@
 using Product_API.Models;
 
-namespace Product_API.Repository.Interface
+namespace Product_API.Interfaces.Repositories
 {
     public interface IProductRepository
     {
+        Task<string?> GetLatestProductIdAsync(int year);
+
         Task<List<Product>> GetAllProductsAsync();
 
         Task<Product?> GetProductByIdAsync(int id);
 
-        Task<Product> AddProductAsync(Product product);
+        Task<Product> CreateAsync(Product product);
 
         Task<List<Product>> SearchProductByNameAsync(string name); 
 

@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
-using Product_API.Services.Interface;
+using Product_API.Interfaces.Services;
+using Product_API.Interfaces.Repositories;
 using Product_API.Services;
 using Product_API.Middlewares;
-using Product_API.Repository.Interface;
 using Product_API.Repository;
 using Product_API.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
