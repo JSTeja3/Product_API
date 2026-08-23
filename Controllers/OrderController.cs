@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 
 using Product_API.Models;
-using Product_API.Services.Interface;
+using Product_API.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 
 namespace Product_API.Controllers

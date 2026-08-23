@@ -1,5 +1,5 @@
 using Product_API.Models;
-using Product_API.Repository.Interface;
+using Product_API.Interfaces.Repositories;
 using Product_API.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,6 +13,18 @@ namespace Product_API.Repository
         {
             _dbContext = dbContext;
         }
+
+        public async Task<string?> GetLatestProductIdAsync(int year)
+        {
+            string prefix = $"{year}-";
+
+            return await _dbContext.Products
+                        .Where(p=>p.ProductId.StartsWith(prefix))
+                        .OrderByDescending(p=>p.ProductId)
+                        .Select(p=>p.ProductId)
+                        .FirstOrDefaultAsync();
+        }
+
         public async Task<List<Product>> GetAllProductsAsync()
         {
             return await _dbContext.Products.AsNoTracking().ToListAsync();
@@ -22,7 +34,7 @@ namespace Product_API.Repository
             return await _dbContext.Products.FirstOrDefaultAsync(p=>p.Id==id);
         }
 
-        public async Task<Product> AddProductAsync(Product product)
+        public async Task<Product> CreateAsync(Product product)
         {
             await _dbContext.Products.AddAsync(product);
             await _dbContext.SaveChangesAsync();
@@ -31,7 +43,7 @@ namespace Product_API.Repository
         }
         public async Task<List<Product>> SearchProductByNameAsync(string name)
         {
-            var products = await _dbContext.Products.AsNoTracking().Where(p => p.Name.ToLower().Contains(name.ToLower())).ToListAsync();
+            var products = await _dbContext.Products.AsNoTracking().Where(p => p.ProductName.ToLower().Contains(name.ToLower())).ToListAsync();
             return products;
         }
 
@@ -45,10 +57,8 @@ namespace Product_API.Repository
             {
                 return null;
             }
-            existingProduct.Name = product.Name;
-            existingProduct.Price = product.Price;
+            existingProduct.ProductName = product.ProductName;
             existingProduct.Category = product.Category;
-            existingProduct.Stock = product.Stock;
             existingProduct.UpdatedAt = DateTime.UtcNow;
 
             await _dbContext.SaveChangesAsync();
@@ -72,23 +82,13 @@ namespace Product_API.Repository
             return true;
         }
 
-        public async Task<PagedResponse<Product>> GetProductsAsync(int pageNumber, int pageSize, string? category, double? minPrice, double? maxPrice)
+        public async Task<PagedResponse<Product>> GetProductsAsync(int pageNumber, int pageSize, string? category)
         {
             var query = _dbContext.Products.AsNoTracking().AsQueryable();
             if (!string.IsNullOrWhiteSpace(category))
             {
                 query = query.Where(p =>
                     p.Category.ToLower() == category.ToLower());
-            }
-
-            if (minPrice.HasValue)
-            {
-                query = query.Where(p => p.Price >= minPrice.Value);
-            }
-
-            if (maxPrice.HasValue)
-            {
-                query = query.Where(p => p.Price <= maxPrice.Value);
             }
 
             var totalCount = await query.CountAsync();

@@ -1,5 +1,5 @@
 using Product_API.Models;
-using Product_API.Services.Interface;
+using Product_API.Interfaces.Services;
 
 namespace Product_API.Services
 {

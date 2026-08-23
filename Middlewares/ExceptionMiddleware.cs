@@ -20,11 +20,9 @@ namespace Product_API.Middlewares
             {
                 await this._next(context);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError(ex, "Unhandled exception for Path {Path} at {Timestamp}", context.Request.Path, DateTime.UtcNow);
-                context.Response.StatusCode = StatusCodes.Status500InternalServerError;
-                context.Response.ContentType  = "application/json";
 
                 var errorResponse = new
                 {
@@ -32,10 +30,12 @@ namespace Product_API.Middlewares
                     timestamp = DateTime.UtcNow,
                     path = context.Request.Path
                 };
+                var jsonResponse = JsonSerializer.Serialize(errorResponse);
+                
+                context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+                context.Response.ContentType = "application/json";
 
-                 var jsonResponse = JsonSerializer.Serialize(errorResponse);
-
-                 await context.Response.WriteAsync(jsonResponse);
+                await context.Response.WriteAsync(jsonResponse);
             }
         }
     }

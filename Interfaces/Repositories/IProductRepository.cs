@@ -1,14 +1,16 @@
 using Product_API.Models;
 
-namespace Product_API.Services.Interface
+namespace Product_API.Interfaces.Repositories
 {
-    public interface IProductService
+    public interface IProductRepository
     {
+        Task<string?> GetLatestProductIdAsync(int year);
+
         Task<List<Product>> GetAllProductsAsync();
 
         Task<Product?> GetProductByIdAsync(int id);
 
-        Task<Product> AddProductAsync(Product product);
+        Task<Product> CreateAsync(Product product);
 
         Task<List<Product>> SearchProductByNameAsync(string name); 
 
@@ -16,7 +18,6 @@ namespace Product_API.Services.Interface
 
         Task<bool> DeleteProductAsync(int id);
 
-        Task<PagedResponse<Product>> GetProductsAsync(int pageNumber, int pageSize, string? category, double? minPrice, double? maxPrice);
-        
+        Task<PagedResponse<Product>> GetProductsAsync(int pageNumber, int pageSize, string? category); 
     }
 }
