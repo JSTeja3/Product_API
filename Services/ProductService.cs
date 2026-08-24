@@ -22,26 +22,36 @@ namespace Product_API.Services
         {
             return await _repo.GetAllProductsAsync();
         }
-        public async Task<Product?> GetProductByIdAsync(int id)
+        public async Task<GetProductResponse?> GetProductByProductIdAsync(string productId)
         {
-            var cachedProduct = _cacheService.Get(id);
+            // var cachedProduct = _cacheService.Get(id);
 
-            if (cachedProduct != null)
+            // if (cachedProduct != null)
+            // {
+            //     _logger.LogInformation("Cache hit for ProductId {ProductId}", id);
+            //     return cachedProduct;
+            // }
+
+            // _logger.LogInformation("Cache miss for ProductId {ProductId}", id);
+
+            Product? product = await _repo.GetProductByProductIdAsync(productId);
+
+            if (product == null)
             {
-                _logger.LogInformation("Cache hit for ProductId {ProductId}", id);
-                return cachedProduct;
+                return null;
             }
 
-            _logger.LogInformation("Cache miss for ProductId {ProductId}", id);
-
-            var product = await _repo.GetProductByIdAsync(id);
-
-            if (product != null)
+            return new GetProductResponse
             {
-                _cacheService.Set(product);
-            }
-
-            return product;
+                ProductId = product.ProductId,
+                ProductName = product.ProductName,
+                Category = product.Category,
+                Quantity = product.Quantity,
+                Version = product.Version,
+                State = product.State,
+                CreatedAt = product.CreatedAt,
+                UpdatedAt = product.UpdatedAt
+            };
 
         }
 

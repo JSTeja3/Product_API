@@ -8,7 +8,7 @@ namespace Product_API.Interfaces.Services
     {
         Task<List<Product>> GetAllProductsAsync();
 
-        Task<Product?> GetProductByIdAsync(int id);
+        Task<GetProductResponse?> GetProductByProductIdAsync(string productId);
 
         Task<CreateProductResponse> CreateAsync(CreateProductRequest request);
 

@@ -26,16 +26,16 @@ namespace Product_API.Services
 
         public async Task<Order?> PlaceOrderAsync(int productId, int quantity)
         {
-            _logger.LogInformation( "Order placement started for ProductId {ProductId} Quantity {Quantity} at {Timestamp}", productId, quantity, DateTime.UtcNow);
+            // _logger.LogInformation( "Order placement started for ProductId {ProductId} Quantity {Quantity} at {Timestamp}", productId, quantity, DateTime.UtcNow);
 
-            Product? product = await _productRepo.GetProductByIdAsync(productId);
+            // Product? product = await _productRepo.GetProductByIdAsync(productId);
 
-            if (product == null)
-            {
-                _logger.LogWarning("Order failed. Product not found for ProductId {ProductId}", productId);
+            // if (product == null)
+            // {
+            //     _logger.LogWarning("Order failed. Product not found for ProductId {ProductId}", productId);
 
-                return null;
-            }
+            //     return null;
+            // }
 
 
             var order = new Order

@@ -29,9 +29,12 @@ namespace Product_API.Repository
         {
             return await _dbContext.Products.AsNoTracking().ToListAsync();
         }
-        public async Task<Product?> GetProductByIdAsync(int id)
+        public async Task<Product?> GetProductByProductIdAsync(string productId)
         {
-            return await _dbContext.Products.FirstOrDefaultAsync(p=>p.Id==id);
+            return await _dbContext.Products
+                .Where(p=>p.ProductId==productId)
+                .OrderByDescending(p=>p.Version)
+                .FirstOrDefaultAsync();
         }
 
         public async Task<Product> CreateAsync(Product product)
