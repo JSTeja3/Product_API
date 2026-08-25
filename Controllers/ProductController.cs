@@ -55,6 +55,21 @@ namespace Product_API.Controllers
             return Ok(product);
         }
 
+        //[Authorize(Roles = "Admin")]
+        [HttpPatch("{productId}")]
+        public async Task<IActionResult> UpdateAsync(string productId, UpdateProductRequest request)
+        {
+            GetProductResponse? updatedProduct =
+                await _productService.UpdateAsync(productId, request);
+
+            if (updatedProduct == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(updatedProduct);
+        }
+
         [Authorize]
         [HttpGet("search")]
         public async Task<IActionResult> SearchProductByName(string name)
@@ -63,23 +78,7 @@ namespace Product_API.Controllers
             return Ok(products);
         }
 
-        [Authorize(Roles = "Admin")]
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateProduct(int id, Product product)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
 
-            Product? updateProduct = await this._productService.UpdateProductAsync(id, product);
-
-            if (updateProduct == null)
-            {
-                return NotFound();
-            }
-            return Ok(updateProduct);
-        }
 
         [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]

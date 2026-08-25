@@ -106,17 +106,56 @@ namespace Product_API.Services
             return await _repo.SearchProductByNameAsync(name);
         }
 
-        public async Task<Product?> UpdateProductAsync(int id, Product product)
+        public async Task<GetProductResponse?> UpdateAsync(string productId, UpdateProductRequest request)
         {
-            var updatedProduct = await _repo.UpdateProductAsync(id, product);
-            if (updatedProduct != null)
+            if (request.ProductName == null && request.Quantity == null && request.Quantity == null)
             {
-                _cacheService.Remove(id);
-                _cacheService.Set(updatedProduct);
-                _logger.LogInformation("Cache updated for ProductId {ProductId}", id);
+                throw new InvalidOperationException(
+                    "At least one field must be provided for update.");
             }
 
-            return updatedProduct;
+            Product? product = await _repo.GetProductByProductIdAsync(productId);
+
+            if (product is null)
+            {
+                return null;
+            }
+            if(product.State != ProductState.Draft)
+            {
+                throw new InvalidOperationException("Only products in Draft state can be updated.");
+            }
+
+            if (request.ProductName != null)
+            {
+                product.ProductName = request.ProductName;
+            }
+
+            if (request.Quantity.HasValue)
+            {
+                product.Quantity = request.Quantity.Value;
+            }
+
+            if(request.Category != null)
+            {
+                product.Category = request.Category;
+            }
+                        
+            product.UpdatedAt = DateTime.UtcNow;
+
+            await _repo.UpdateAsync(product);
+
+            return new GetProductResponse
+            {
+                ProductId = product.ProductId,
+                ProductName = product.ProductName,
+                Category = product.Category,
+                Quantity = product.Quantity,
+                Version = product.Version,
+                State = product.State,
+                CreatedAt = product.CreatedAt,
+                UpdatedAt = product.UpdatedAt
+            };
+            
         }
 
         public async Task<bool> DeleteProductAsync(int id)

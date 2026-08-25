@@ -14,7 +14,7 @@ namespace Product_API.Interfaces.Services
 
         Task<List<Product>> SearchProductByNameAsync(string name); 
 
-        Task<Product?> UpdateProductAsync(int id, Product product);
+        Task<GetProductResponse?> UpdateAsync(string productId, UpdateProductRequest request);
 
         Task<bool> DeleteProductAsync(int id);
 
