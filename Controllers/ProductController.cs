@@ -9,7 +9,7 @@ using Product_API.DTOs.Responses;
 namespace Product_API.Controllers
 {
     [ApiController]
-    [Route("products")]
+    [Route("[controller]")]
     public class ProductController : ControllerBase
     {
         private readonly IProductService _productService;
@@ -27,30 +27,47 @@ namespace Product_API.Controllers
             //throw new InvalidOperationException("Database connection timeout");
         }
 
-        //[Authorize]
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetProductById(int id)
+        //[Authorize(Roles="Admin")]
+        [HttpPost("create")]
+        public async Task<IActionResult> CreateAsync(CreateProductRequest request)
         {
-            Product? product = await this._productService.GetProductByIdAsync(id);
+            CreateProductResponse createdProduct =
+                await _productService.CreateAsync(request);
+
+            return CreatedAtAction(
+                "GetProductByProductId",
+                new { productId = createdProduct.ProductId },
+                createdProduct);
+        }
+
+        //[Authorize]
+        [HttpGet("{productId}")]
+        public async Task<IActionResult> GetProductByProductIdAsync(string productId)
+        {
+            GetProductResponse? product =
+                await _productService.GetProductByProductIdAsync(productId);
 
             if (product == null)
             {
                 return NotFound();
             }
+
             return Ok(product);
         }
 
         //[Authorize(Roles = "Admin")]
-        [HttpPost("create")]
-        public async Task<IActionResult> CreateAsync(CreateProductRequest request)
+        [HttpPatch("{productId}")]
+        public async Task<IActionResult> UpdateAsync(string productId, UpdateProductRequest request)
         {
-            CreateProductResponse createdProduct = await _productService.CreateAsync(request);
+            GetProductResponse? updatedProduct =
+                await _productService.UpdateAsync(productId, request);
 
-            return CreatedAtAction(
-                nameof(GetProductById),
-                new { id = createdProduct.Id },
-                createdProduct);
+            if (updatedProduct == null)
+            {
+                return NotFound();
+            }
 
+            return Ok(updatedProduct);
         }
 
         [Authorize]
@@ -61,23 +78,7 @@ namespace Product_API.Controllers
             return Ok(products);
         }
 
-        [Authorize(Roles = "Admin")]
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateProduct(int id, Product product)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
 
-            Product? updateProduct = await this._productService.UpdateProductAsync(id, product);
-
-            if (updateProduct == null)
-            {
-                return NotFound();
-            }
-            return Ok(updateProduct);
-        }
 
         [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]

@@ -20,6 +20,24 @@ namespace Product_API.Middlewares
             {
                 await this._next(context);
             }
+            catch(InvalidOperationException ex)
+            {
+                _logger.LogError(ex, "Invalid operation for Path {Path} at {Timestamp}", context.Request.Path, DateTime.UtcNow);
+            
+                var errorResponse = new
+                {
+                    message = ex.Message,
+                    timestamp = DateTime.UtcNow,
+                    path = context.Request.Path
+                };
+                var jsonResponse = JsonSerializer.Serialize(errorResponse);
+
+                context.Response.StatusCode = StatusCodes.Status409Conflict;
+                context.Response.ContentType = "application/json";
+
+                await context.Response.WriteAsync(jsonResponse);
+
+            }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Unhandled exception for Path {Path} at {Timestamp}", context.Request.Path, DateTime.UtcNow);

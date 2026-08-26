@@ -29,9 +29,12 @@ namespace Product_API.Repository
         {
             return await _dbContext.Products.AsNoTracking().ToListAsync();
         }
-        public async Task<Product?> GetProductByIdAsync(int id)
+        public async Task<Product?> GetProductByProductIdAsync(string productId)
         {
-            return await _dbContext.Products.FirstOrDefaultAsync(p=>p.Id==id);
+            return await _dbContext.Products
+                .Where(p=>p.ProductId==productId)
+                .OrderByDescending(p=>p.Version)
+                .FirstOrDefaultAsync();
         }
 
         public async Task<Product> CreateAsync(Product product)
@@ -47,23 +50,9 @@ namespace Product_API.Repository
             return products;
         }
 
-        public async Task<Product?> UpdateProductAsync(int id, Product product)
+        public async Task UpdateAsync(Product product)
         {
-            await Task.Delay(50);
-
-            var existingProduct = await _dbContext.Products.FindAsync(product.Id);
-
-            if (existingProduct == null)
-            {
-                return null;
-            }
-            existingProduct.ProductName = product.ProductName;
-            existingProduct.Category = product.Category;
-            existingProduct.UpdatedAt = DateTime.UtcNow;
-
             await _dbContext.SaveChangesAsync();
-
-            return existingProduct;
         }
 
         public async Task<bool> DeleteProductAsync(int id)
