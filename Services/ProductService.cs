@@ -3,6 +3,7 @@ using Product_API.Interfaces.Services;
 using Product_API.Interfaces.Repositories;
 using Product_API.DTOs.Requests;
 using Product_API.DTOs.Responses;
+using Product_API.Exceptions;
 
 namespace Product_API.Services
 {
@@ -22,7 +23,7 @@ namespace Product_API.Services
         {
             return await _repo.GetAllProductsAsync();
         }
-        public async Task<GetProductResponse?> GetProductByProductIdAsync(string productId)
+        public async Task<GetProductResponse> GetProductByProductIdAsync(string productId)
         {
             // var cachedProduct = _cacheService.Get(id);
 
@@ -38,7 +39,7 @@ namespace Product_API.Services
 
             if (product == null)
             {
-                return null;
+                throw new NotFoundException($"Product {productId} was not found.");
             }
 
             return new GetProductResponse
@@ -106,11 +107,11 @@ namespace Product_API.Services
             return await _repo.SearchProductByNameAsync(name);
         }
 
-        public async Task<GetProductResponse?> UpdateAsync(string productId, UpdateProductRequest request)
+        public async Task<GetProductResponse> UpdateAsync(string productId, UpdateProductRequest request)
         {
             if (request.ProductName == null && request.Quantity == null && request.Quantity == null)
             {
-                throw new InvalidOperationException(
+                throw new BadRequestException(
                     "At least one field must be provided for update.");
             }
 
@@ -118,11 +119,11 @@ namespace Product_API.Services
 
             if (product is null)
             {
-                return null;
+                throw new NotFoundException($"Product {productId} was not found.");
             }
             if(product.State != ProductState.Draft)
             {
-                throw new InvalidOperationException("Only products in Draft state can be updated.");
+                throw new ConflictException("Only products in Draft state can be updated.");
             }
 
             if (request.ProductName != null)

@@ -9,7 +9,7 @@ using Product_API.DTOs.Responses;
 namespace Product_API.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class ProductController : ControllerBase
     {
         private readonly IProductService _productService;
@@ -28,7 +28,7 @@ namespace Product_API.Controllers
         }
 
         //[Authorize(Roles="Admin")]
-        [HttpPost("create")]
+        [HttpPost]
         public async Task<IActionResult> CreateAsync(CreateProductRequest request)
         {
             CreateProductResponse createdProduct =
@@ -47,11 +47,6 @@ namespace Product_API.Controllers
             GetProductResponse? product =
                 await _productService.GetProductByProductIdAsync(productId);
 
-            if (product == null)
-            {
-                return NotFound();
-            }
-
             return Ok(product);
         }
 
@@ -61,11 +56,6 @@ namespace Product_API.Controllers
         {
             GetProductResponse? updatedProduct =
                 await _productService.UpdateAsync(productId, request);
-
-            if (updatedProduct == null)
-            {
-                return NotFound();
-            }
 
             return Ok(updatedProduct);
         }
