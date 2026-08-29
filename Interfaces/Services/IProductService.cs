@@ -8,13 +8,13 @@ namespace Product_API.Interfaces.Services
     {
         Task<List<Product>> GetAllProductsAsync();
 
-        Task<GetProductResponse?> GetProductByProductIdAsync(string productId);
+        Task<GetProductResponse> GetProductByProductIdAsync(string productId);
 
         Task<CreateProductResponse> CreateAsync(CreateProductRequest request);
 
         Task<List<Product>> SearchProductByNameAsync(string name); 
 
-        Task<GetProductResponse?> UpdateAsync(string productId, UpdateProductRequest request);
+        Task<GetProductResponse> UpdateAsync(string productId, UpdateProductRequest request);
 
         Task<bool> DeleteProductAsync(int id);
 
